@@ -1,2 +1,4 @@
 Added gitignore and tried creating an object printing hello.
+I am not really sure where to start. I will try out Swing to see how it draws basic structures like line, rectangular, etc.
+I have spent around 2 hours on this project so far.
 I have planned to start the project later, so I am lagging behind what I presented in the project plans
