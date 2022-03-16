@@ -1,1 +1,2 @@
+Added gitignore and tried creating an object printing hello.
 I have planned to start the project later, so I am lagging behind what I presented in the project plans
