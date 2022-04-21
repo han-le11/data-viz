@@ -4,5 +4,6 @@
     <option name="higherKinds" value="true" />
     <option name="deprecationWarnings" value="true" />
     <option name="explainTypeErrors" value="true" />
+    <profile name="sbt 1" modules="Numerical visualization library" />
   </component>
 </project>

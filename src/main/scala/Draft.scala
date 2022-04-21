@@ -1,10 +1,11 @@
 import scala.swing._
-import java.awt.{Color, Composite, FontMetrics, Graphics, Graphics2D}
-import java.awt.geom.{Point2D, Line2D}
+import java.awt._
+import javax.swing.JComponent // Color and Graphics classes
+import java.awt.geom._ // shapes and paths
 import scala.io.Source
 
-
-object DataViz extends SimpleSwingApplication {
+// This app is not relevant.
+object Draft extends SimpleSwingApplication {
 
     def top = new MainFrame {
         title = "Numerical data visualization"
@@ -19,9 +20,5 @@ object DataViz extends SimpleSwingApplication {
         g.draw(new Line2D.Double(x1, y1, x2, y2))
         g.setColor(Color.blue)
     }
-
-    /*trait Command {
-        def execute()
-    }*/
-
 }
+
