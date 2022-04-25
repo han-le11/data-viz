@@ -52,7 +52,6 @@ class Graph extends JPanel {
   }
 
 
-
   /** Override method paintComponent to draw graphic. This method is called automatically. **/
   override def paintComponent(g: Graphics) {
 
@@ -130,6 +129,7 @@ class Graph extends JPanel {
     }*/
 
     // Draw x and y axes
+    g2d.setColor(Color.BLACK)
     g2d.drawLine(padding + labelPadding, this.getHeight() - padding - labelPadding,
       padding + labelPadding, padding)
     g2d.drawLine(padding + labelPadding, getHeight() - padding - labelPadding,
