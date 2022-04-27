@@ -2,17 +2,28 @@ import scala.collection.mutable
 
 object DataViz {
 
-    def main(args: Array[String]): Unit = {
-        val graph = new Visualization()
+  def main(args: Array[String]): Unit = {
+    val graph = new Visualization()
 
-        val input = Vector(
-            new Line(label="Jade", data=Vector((3, 2.3), (4, 2.6), (5, 4.2))),
-            new Line(label="Cindy", data=Vector((2, 5.5), (4, 2), (5, 3))),
-            new Line("Han", data=Vector((2,3), (3, 3), (4, 3), (5,3)))
-        )
-       input.foreach(i => graph.addInput(i))
+    val inputFile = "example/silver.csv"
+    val reader = new CSVReader(inputFile)
+    val data = reader.records
+    val xAxis = Vector.range(0, 31, 1).map(_.toDouble)
 
-        //graph.line(Vector((30, 90), (40,70), (90, 120), (120, 40)))
-        graph.show()
-    }
+    // choose necessary columns. Columns Open,High,Low,Close are labels.
+    val open = new Line("Open", (xAxis zip data("Open").map(x => x.toDouble)).takeRight(31))
+    graph.addInput(open)
+
+    val close = new Line("Close", (xAxis zip data("Close").map(x => x.toDouble)).takeRight(31))
+    graph.addInput(close)
+
+    val high = new Line("High", (xAxis zip data("High").map(x => x.toDouble)).takeRight(31))
+    graph.addInput(high)
+
+    val low = new Line("Low", (xAxis zip data("Low").map(x => x.toDouble)).takeRight(31))
+    graph.addInput(low)
+
+    graph.show()
+
+  }
 }

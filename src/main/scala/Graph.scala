@@ -11,25 +11,25 @@ class Graph extends JPanel {
   val gridColor = new Color(200, 200, 200, 200)
   val graphStroke = new BasicStroke(2f) // stroking style for the lines
   val pointWidth = 4
-  val numberYDivisions = 10
+  val yDivisions = 10
 
-  var inputs = new mutable.ListBuffer[Line]  // list of input lines
+  var inputLines = new mutable.ListBuffer[Line]  // list of input lines
 
   /** Get a list of (x,y) tuples of all lines. **/
   def coordinates() =  {
     var points = Vector[(Double, Double)]()
-    for (line <- inputs) {
+    for (line <- inputLines) {
       points ++= line.data
     }
     points
   }
 
-  /** Add a new line. **/
+  /** Add a new trend line. * */
   def addLine(l: Line) = {
-    inputs += l
+    inputLines += l
   }
 
-  /** Return the minimum x or y of the list **/
+  /** Return the minimum x or y of the coordinates **/
   def getMin(axis: String): Double = {
     var minCoord = Double.PositiveInfinity
     for (point <- coordinates()) {
@@ -40,7 +40,7 @@ class Graph extends JPanel {
     minCoord
   }
 
-  /** Return the maximum x or y of the list  **/
+  /** Return the maximum x or y of the input coordinates **/
   def getMax(axis: String): Double = {
     var maxCoord = Double.NegativeInfinity
     for (point <- coordinates()) {
@@ -65,7 +65,7 @@ class Graph extends JPanel {
     val xScale = this.getWidth - 2* padding - labelPadding
     val yScale = this.getHeight - 2* padding - labelPadding
 
-    // Find bounds of inputs
+    // Find min and max bounds of all inputs
     val xMin = getMin("x")
     val xMax = getMax("x")
     val yMin = getMin("y")
@@ -73,8 +73,8 @@ class Graph extends JPanel {
 
     // Scaling from the given coordinates to pixels, then draw the lines.
     g2d.setStroke(graphStroke)
-    def drawAndScale() = {
-      for (line <- inputs) {
+    def scaleAndDraw(): Unit = {
+      for (line <- inputLines) {
         g2d.setColor(line.lineColor) // get a different color for each line.
         val coords = line.data // tuples (x,y)
         val pixelPoints = mutable.ListBuffer[Point2D.Double]() // a list of points in pixels
@@ -86,47 +86,41 @@ class Graph extends JPanel {
           pixelPoints += newPoint
         }
 
-        for (i <- pixelPoints.indices) { // draw the current line
+        for (i <- pixelPoints.indices) { // draw a single line
           if (i >= 1) {
             val x1 = pixelPoints(i).x
             val y1 = pixelPoints(i).y
             val x2 = pixelPoints(i - 1).x
             val y2 = pixelPoints(i - 1).y
             val line = new Line2D.Double(x1, y1, x2, y2)
-            println(x1, y1, x2, y2)
             g2d.draw(line)
           }
         }
       }
     }
+    scaleAndDraw()
 
-    drawAndScale()
-
-    /*for (i <- points.indices) {
-      val x = ((points(i).x - xMin) / (xMax - xMin)) * xScale + padding + labelPadding
-      val y = yScale - ((points(i).y - yMin) / (yMax - yMin)) * yScale + padding
-      val newPoint = new Point2D.Double(x, y)
-      pixelPoints += newPoint
-    }*/
-
-    // create hatch marks and grid lines for y axis
-    /*for (i <- 0 to numberYDivisions) {
+    // create ticks and grid lines for y axis
+    for (i <- 0 to yDivisions) {
       val x0 = padding + labelPadding
       val x1 = pointWidth + padding + labelPadding
-      val y0 = getHeight - ((i * (getHeight - padding * 2 - labelPadding)) / numberYDivisions + padding + labelPadding)
+      val y0 = getHeight - ((i * (getHeight - padding * 2 - labelPadding)) / yDivisions + padding + labelPadding)
       val y1 = y0
 
-      if (points.size > 0) {
+      if (inputLines.size > 0) {
+        // draw the grid
         g2d.setColor(gridColor)
         g2d.drawLine(padding + labelPadding + 1 + pointWidth, y0, getWidth - padding, y1)
+
+        // draw the y axis
         g2d.setColor(Color.BLACK)
-        val yLabel = ((yMin + (yMax - yMin) * ((i * 1.0) / numberYDivisions)) * 100).asInstanceOf[Int] / 100.0 + ""
+        val yLabel = ((yMin + (yMax - yMin) * ((i * 1.0) / yDivisions)) * 100).asInstanceOf[Int] / 100.0 + ""
         val metrics = g2d.getFontMetrics
         val labelWidth = metrics.stringWidth(yLabel)
         g2d.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight / 2) - 3)
       }
       g2d.drawLine(x0, y0, x1, y1)
-    }*/
+    }
 
     // Draw x and y axes
     g2d.setColor(Color.BLACK)

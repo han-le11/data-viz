@@ -1,13 +1,9 @@
 import java.awt.Dimension
 import javax.swing._
 import scala.swing._
-import java.util
 import scala.util.Random
 
 class Visualization {
-
-  // Read the input file
-  //def readFile
 
   JFrame.setDefaultLookAndFeelDecorated(true)
   val frame = new JFrame("Numerical visualization library")
@@ -16,6 +12,7 @@ class Visualization {
   graph.setPreferredSize(new Dimension(800, 600))
   frame.add(graph) // frame can only take one object?
 
+  /** Add line to the graph */
   def addInput(l: Line): Unit = {
     graph.addLine(l)
   }
