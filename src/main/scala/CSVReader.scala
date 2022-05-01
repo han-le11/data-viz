@@ -5,7 +5,7 @@ import scala.collection.mutable
 
 class CSVReader(val inputFile: String) {
 
-  // Key as the string, vector of strings as values
+  // Record the column names as keys and data of columns as values
   var records = new mutable.LinkedHashMap[String, Vector[String]]
 
   try {
@@ -14,15 +14,22 @@ class CSVReader(val inputFile: String) {
 
     // open the streams
     try {
-      // the first line contains column names that can be used as labels
+      // read the first line which contains the names of columns and use them as labels
       val labels = linesIn.readLine().split(",")
+
       for (i <- 0 until labels.size) {
-        records += (labels(i) -> Vector[String]())
+        records += (labels(i) -> Vector[String]())  // add the labels and their corresponding empty vectors
       }
 
       var oneLine: String = null
       while ({oneLine = linesIn.readLine(); oneLine != null}) {
         val values = oneLine.split(",")  // use comma as separator
+
+        if (values.size != labels.size) {
+          throw new InvalidCsvException("Invalid file format. The amount of values does not match the number of the columns. " +
+            "There might be missing values or redundant values.")
+        }
+
         for (i <- 0 until values.size) {
           records(labels(i)) = records(labels(i)) :+ values(i)
         }
@@ -33,13 +40,9 @@ class CSVReader(val inputFile: String) {
       fileIn.close()
       linesIn.close()
     }
-  } catch {
-    // Response to failed file opening.
-    case e: FileNotFoundException => e.printStackTrace()
-
-    // Response to unsuccessful reading
-    case e: IOException => e.printStackTrace()
-
   }
+}
+
+case class InvalidCsvException(message: String) extends Exception(message) {
 
 }

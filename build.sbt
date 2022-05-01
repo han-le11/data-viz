@@ -7,4 +7,7 @@ lazy val root = (project in file("."))
     name := "Numerical visualization library"
   )
 libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "3.0.0"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0"
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.0"
+
 

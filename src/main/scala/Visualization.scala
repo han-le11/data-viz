@@ -3,6 +3,8 @@ import javax.swing._
 import scala.swing._
 import scala.util.Random
 
+/** This class is used to visualize the graph. */
+
 class Visualization {
 
   JFrame.setDefaultLookAndFeelDecorated(true)
@@ -10,12 +12,14 @@ class Visualization {
   frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
   val graph = new Graph()
   graph.setPreferredSize(new Dimension(800, 600))
-  frame.add(graph) // frame can only take one object?
+  frame.add(graph)
+  var showGrid = graph.showGrid
 
-  /** Add line to the graph */
+  /** Add a line to the graph */
   def addInput(l: Line): Unit = {
     graph.addLine(l)
   }
+
 
   // for only 1 line
   /*def line(coords: Vector[(Double, Double)]): Unit = {
