@@ -13,13 +13,15 @@ class Visualization {
   val graph = new Graph()
   graph.setPreferredSize(new Dimension(800, 600))
   frame.add(graph)
-  var showGrid = graph.showGrid
+
+  def showGrid(show: Boolean) = {
+    graph.includeGrid = show
+  }
 
   /** Add a line to the graph */
   def addInput(l: Line): Unit = {
     graph.addLine(l)
   }
-
 
   // for only 1 line
   /*def line(coords: Vector[(Double, Double)]): Unit = {

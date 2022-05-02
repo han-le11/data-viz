@@ -3,7 +3,7 @@
 object DataViz {
   def main(args: Array[String]): Unit = {
     val demoGraph = new Visualization()
-    demoGraph.showGrid = true
+    demoGraph.showGrid(true) // set the graph to show
 
     val inputFile = "example/silver.csv"
     val reader = new CSVReader(inputFile)

@@ -19,6 +19,4 @@ class Line(val label: String, val data: Vector[(Double, Double)]) {
   val b: Float = rand.nextFloat
   val lineColor = new Color(r, g, b)
 
-
-
 }

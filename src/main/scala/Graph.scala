@@ -13,7 +13,7 @@ class Graph extends JPanel {
   val yDivisions = 11  // number of ticks on y axis
 
   val gridColor = new Color(200, 200, 200, 200)
-  var showGrid: Boolean = true
+  var includeGrid: Boolean = _
 
   var inputLines = new mutable.ListBuffer[Line]  // store input lines
 
@@ -103,24 +103,13 @@ class Graph extends JPanel {
 
     // draw the grid
     def drawGrid() = {
-      if (showGrid) {
-        for (i <- 0 to yDivisions) {  // grid line for y axis
-          val y0 = getHeight - ((i * (getHeight - padding * 3)) / yDivisions + padding * 2)
-          val y1 = y0
-          g2d.setColor(gridColor)
-          g2d.drawLine(padding * 2 + 1 + pointWidth, y0, getWidth - padding, y1)
-        }
-      }
-    }
-    drawGrid()
-
-    def drawTicks(): Unit = {
-      for (i <- 0 to xDivision) { // create ticks for x axis
+      for (i <- 0 to xDivision) { // grid line for x axis
         if (inputLines.nonEmpty) {
           val x0 = i * (getWidth - padding * 3) / (inputLines.size - 1) + padding * 2
           val x1 = x0
           val y0 = getHeight - padding * 2
           val y1 = y0 - pointWidth
+
           if ((i % ((inputLines.size / 20.0).asInstanceOf[Int] + 1)) == 0) {
             g2d.setColor(gridColor)
             g2d.drawLine(x0, getHeight - padding * 2 - 1 - pointWidth, x1, padding)
@@ -130,29 +119,45 @@ class Graph extends JPanel {
             val labelWidth = metrics.stringWidth(xLabel)
             g2d.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight + 3)
           }
+        }
+      }
+      for (i <- 0 to yDivisions) {  // grid line for y axis
+        val y0 = getHeight - ((i * (getHeight - padding * 3)) / yDivisions + padding * 2)
+        val y1 = y0
+        g2d.setColor(gridColor)
+        g2d.drawLine(padding * 2 + 1 + pointWidth, y0, getWidth - padding, y1)
+      }
+    }
+    if (includeGrid) drawGrid()
+
+    def drawTicks(): Unit = {
+      for (i <- 0 to xDivision) { // create ticks for x axis
+        if (inputLines.nonEmpty) {
+          val x0 = i * (getWidth - padding * 3) / (inputLines.size - 1) + padding * 2
+          val x1 = x0
+          val y0 = getHeight - padding * 2
+          val y1 = y0 - pointWidth
           g2d.drawLine(x0, y0, x1, y1)
         }
       }
+
+      // create ticks for y axis
+      for (i <- 0 to yDivisions) {
+        val x0 = padding * 2
+        val x1 = pointWidth + padding * 2
+        val y0 = getHeight - ((i * (getHeight - padding * 3)) / yDivisions + padding * 2)
+        val y1 = y0
+        if (inputLines.nonEmpty) {
+          g2d.setColor(Color.BLACK)
+          val yTick = ((yMin + (yMax - yMin) * ((i * 1.0) / yDivisions)) * 100).asInstanceOf[Int] / 100.0 + ""
+          val metrics = g2d.getFontMetrics
+          val labelWidth = metrics.stringWidth(yTick)
+          g2d.drawString(yTick, x0 - labelWidth - 5, y0 + (metrics.getHeight / 2) - 3)
+        }
+        g2d.drawLine(x0, y0, x1, y1)
+      }
     }
     drawTicks()
-
-    // create ticks for y axis
-    for (i <- 0 to yDivisions) {
-      val x0 = padding * 2
-      val x1 = pointWidth + padding * 2
-      val y0 = getHeight - ((i * (getHeight - padding * 3)) / yDivisions + padding * 2)
-      val y1 = y0
-
-      if (inputLines.nonEmpty) {
-        // draw the y axis
-        g2d.setColor(Color.BLACK)
-        val yTick = ((yMin + (yMax - yMin) * ((i * 1.0) / yDivisions)) * 100).asInstanceOf[Int] / 100.0 + ""
-        val metrics = g2d.getFontMetrics
-        val labelWidth = metrics.stringWidth(yTick)
-        g2d.drawString(yTick, x0 - labelWidth - 5, y0 + (metrics.getHeight / 2) - 3)
-      }
-      g2d.drawLine(x0, y0, x1, y1)
-    }
 
     // Draw x and y axes
       g2d.setColor(Color.BLACK)
