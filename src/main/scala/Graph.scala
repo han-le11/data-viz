@@ -4,15 +4,13 @@ import javax.swing._
 import scala.collection.mutable
 
 class Graph extends JPanel {
-  val padding = 25 // starting point from the upper left corner
-  //val labelPadding = 25
+  val padding = 50 // starting point from the upper left corner
   val pointColor = new Color(100, 100, 100, 180)
   val lineStroke = new BasicStroke(2f) // stroking style for the lines
   val pointWidth = 4
   var xAxisName: String = ""
   var yAxisName: String = ""
-  val numberOfTicksX = 11  // number of ticks on x axis
-
+  val numberOfTicksX = 10  // number of ticks on x axis
   val numberOfTicksY = 11  // number of ticks on y axis
 
   val gridColor = new Color(200, 200, 200, 200)
@@ -21,7 +19,8 @@ class Graph extends JPanel {
   var inputLines = new mutable.ListBuffer[Line]  // store input lines
   // get the number of points of each line to create ticks on x axis
   //var numberOfTicksX: Int = inputLines.flatMap(line => line.data).size
-  /** Get a list of (x,y) tuples of all lines. **/
+
+  /** Get a list of (x,y) tuples of all lines. */
   def coordinates() =  {
     var points = Vector[(Double, Double)]()
     for (line <- inputLines) {
@@ -30,12 +29,12 @@ class Graph extends JPanel {
     points
   }
 
-  /** Add a new trend line. * */
+  /** Add a new trend line. */
   def addLine(l: Line) = {
     inputLines += l
   }
 
-  /** Return the minimum x or y of the coordinates **/
+  /** Return the minimum x or y of the coordinates */
   def getMin(axis: String): Double = {
     var minCoord = Double.PositiveInfinity
     for (point <- coordinates()) {
@@ -46,7 +45,7 @@ class Graph extends JPanel {
     minCoord
   }
 
-  /** Return the maximum x or y of the input coordinates **/
+  /** Return the maximum x or y of the input coordinates */
   def getMax(axis: String): Double = {
     var maxCoord = Double.NegativeInfinity
     for (point <- coordinates()) {
@@ -111,19 +110,17 @@ class Graph extends JPanel {
 
     // Method to draw the grid
     def drawGrid() = {
-      /*for (i <- 0 to xDivision) { // grid line for x axis
+      for (i <- 0 to numberOfTicksX) { // grid line for x axis
         if (inputLines.nonEmpty) {
-          val x0 = i * (getWidth - padding * 3) / (inputLines.size - 1) + padding * 2
+          val x0 = i * (getWidth - padding * 3) / numberOfTicksX + padding * 2
           val x1 = x0
           val y0 = getHeight - padding * 2
           val y1 = y0 - pointWidth
-
-          if ((i % ((inputLines.size / 20.0).asInstanceOf[Int] + 1)) == 0) {
-            g2d.setColor(gridColor)
-            g2d.drawLine(x0, getHeight - padding * 2 - 1 - pointWidth, x1, padding)
-          }
+          g2d.setColor(gridColor)
+          g2d.drawLine(x0, getHeight - padding * 2 - 1 - pointWidth, x1, padding)
         }
-      }*/
+      }
+
       for (i <- 0 to numberOfTicksY) {  // grid line for y axis
         val y0 = getHeight - ((i * (getHeight - padding * 3)) / numberOfTicksY + padding * 2)
         val y1 = y0
@@ -133,6 +130,13 @@ class Graph extends JPanel {
     }
     if (includeGrid) drawGrid()
 
+
+    def addAxisNames(): Unit = {
+      val font = new Font("Serif", Font.PLAIN, 60)
+      /*g2d.drawString(, this.getHeight / 2, this.getHeight / 2)  // name and (x,y) location
+      g2d.drawString()*/
+    }
+    addAxisNames()
 
     // Method to draw the ticks and labels on axes
     def drawLabelsAndTicks(): Unit = {
@@ -150,7 +154,7 @@ class Graph extends JPanel {
         if (isInteger("x")) {  // if all x values are integers
           xLabel = ((xMin + (xMax - xMin) * ((i * 1.0) / numberOfTicksX)) * 100).asInstanceOf[Int] / 100 + ""
           val labelWidth = metrics.stringWidth(xLabel)
-          g2d.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight + 3)  // draw the labels on x axis
+          g2d.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight + 3)  // name and location of label on x axis
 
         } else if (!isInteger("x")) {  // if not all x values are integers
           xLabel = ((xMin + (xMax - xMin) * ((i * 1.0) / numberOfTicksX)) * 100.0).asInstanceOf[Int] / 100.0 + ""
@@ -168,7 +172,6 @@ class Graph extends JPanel {
 
         if (inputLines.nonEmpty) {
           val yLabel = ((yMin + (yMax - yMin) * ((i * 1.0) / numberOfTicksY)) * 100).asInstanceOf[Int] / 100.0 + ""
-          //val metrics = g2d.getFontMetrics
           val labelWidth = metrics.stringWidth(yLabel)
           g2d.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight / 2) - 3) // draw the labels on x axis
         }

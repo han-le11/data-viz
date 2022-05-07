@@ -11,11 +11,8 @@ class Visualization {
   val frame = new JFrame("Numerical visualization library")
   frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
   val graph = new Graph()
-  graph.setPreferredSize(new Dimension(800, 600))
+  graph.setPreferredSize(new Dimension(1000, 800))
   frame.add(graph)
-
-  var xAxisName = graph.xAxisName
-  var yAxisName = graph.yAxisName
 
   def showGrid(show: Boolean) = {
     graph.includeGrid = show
@@ -25,6 +22,9 @@ class Visualization {
   def addInput(l: Line): Unit = {
     graph.addLine(l)
   }
+
+  def nameXAxis(name: String) = graph.nameXAxis(name)
+  def nameYAxis(name: String) = graph.nameYAxis(name)
 
   // Show the graph
   def show(): Unit = {
