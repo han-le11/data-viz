@@ -14,6 +14,9 @@ class Visualization {
   graph.setPreferredSize(new Dimension(800, 600))
   frame.add(graph)
 
+  var xAxisName = graph.xAxisName
+  var yAxisName = graph.yAxisName
+
   def showGrid(show: Boolean) = {
     graph.includeGrid = show
   }
@@ -22,11 +25,6 @@ class Visualization {
   def addInput(l: Line): Unit = {
     graph.addLine(l)
   }
-
-  // for only 1 line
-  /*def line(coords: Vector[(Double, Double)]): Unit = {
-    graph.line(coords)
-  }*/
 
   // Show the graph
   def show(): Unit = {
