@@ -11,22 +11,23 @@ class Visualization {
   val frame = new JFrame("Numerical visualization library")
   frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
-  val axesAndGrid = new Accessories  // Takes care of axes, grids, etc.
-  val graph = new Graph(axesAndGrid)
+  val accessories = new Accessories  // Takes care of axes, grids, etc.
+  val graph = new LineGraph(accessories)
   graph.setPreferredSize(new Dimension(1200, 800))
   frame.add(graph)
 
-  def showGrid(show: Boolean) = {
-    graph.includeGrid = show
-  }
+  def nameLineGraph(name: String) = accessories.changeGraphName(name)
+  def nameXAxis(name: String) = accessories.nameXAxis(name)
+  def nameYAxis(name: String) = accessories.nameYAxis(name)
 
   /** Add a line to the graph */
   def addInput(l: Line): Unit = {
     graph.addLine(l)
   }
 
-  def nameXAxis(name: String) = axesAndGrid.nameXAxis(name)
-  def nameYAxis(name: String) = axesAndGrid.nameYAxis(name)
+  def showGrid(show: Boolean) = {
+    graph.includeGrid = show
+  }
 
   // Show the graph
   def show(): Unit = {

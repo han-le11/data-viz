@@ -7,6 +7,7 @@ object Demo {
     val inputFile = "example/silver.csv"
     val reader = new CSVReader(inputFile)
     val data = reader.records
+    demoGraph.nameLineGraph("Silver price")
 
     demoGraph.nameXAxis("day number")
     demoGraph.nameYAxis("price")

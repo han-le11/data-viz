@@ -3,12 +3,12 @@ import java.awt.geom._
 import javax.swing._
 import scala.collection.mutable
 
-class Graph(val accessories: Accessories) extends JPanel {
+class LineGraph(val accessories: Accessories) extends JPanel {
   val padding = 80 // starting point from the upper left corner
   val pointColor = new Color(100, 100, 100, 180)
   val lineStroke = new BasicStroke(2f) // stroking style for the lines
   val pointWidth = 4
-
+  val defaultColorList = Vector(Color.BLUE, Color.RED, Color.ORANGE) //, Color.MAGENTA)
   val numberOfTicksX = 10  // number of ticks on x axis
   val numberOfTicksY = 10 // number of ticks on y axis
 
@@ -54,11 +54,17 @@ class Graph(val accessories: Accessories) extends JPanel {
     val yMax = getMax("y")
 
     // Scale from the given coordinates to pixels, then draw the lines.
+
     def scaleAndDrawLines(): Unit = {
       g2d.setStroke(lineStroke)
-      for (line <- inputLines) {
-        g2d.setColor(line.lineColor) // get a different color for each line.
-        val coords = line.data // tuples (x,y)
+      //for (line <- inputLines) {
+      for (i <- inputLines.indices) {
+        //if (i < defaultColorList.size) {
+        g2d.setColor(inputLines(i).lineColor)  // set a line color for each line.
+
+        //} else g2d.setColor(inputLines(i).lineColor)  // randomize a color
+
+        val coords = inputLines(i).data  // tuples (x,y)
         val pixelPoints = mutable.ListBuffer[Point2D.Double]() // a list of points in pixels
 
         for (i <- coords.indices) {  // go through the vector of coordinates to scale each point
@@ -82,7 +88,7 @@ class Graph(val accessories: Accessories) extends JPanel {
     }
     scaleAndDrawLines()
 
-    accessories.draw(g2d, this, inputLines)  // add accessories such as names of axes
+    accessories.draw(g2d, this, inputLines)  // add accessories such as names of axes and legend.
 
     if (includeGrid) drawGrid(g2d, this)
 
