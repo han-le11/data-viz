@@ -1,11 +1,13 @@
 import java.awt._
+import java.awt.geom._
+import javax.swing.JPanel
 import scala.util.Random
 
 /** A single line with label (name of the category), data (tuples of x and y coordinates).
-  * lineColor generates a random color. This class can be used to make the legend.
+  * lineColor generates a random color.
   */
 
-class Line(val label: String, val data: Vector[(Double, Double)]) {
+class Line(val name: String, val data: Vector[(Double, Double)]) {
   val rand = new Random()
 
   /*// adjust hue, saturation, and luminance to get pastel colors.

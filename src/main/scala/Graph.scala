@@ -3,20 +3,20 @@ import java.awt.geom._
 import javax.swing._
 import scala.collection.mutable
 
-class Graph extends JPanel {
-  val padding = 50 // starting point from the upper left corner
+class Graph(val accessories: Accessories) extends JPanel {
+  val padding = 80 // starting point from the upper left corner
   val pointColor = new Color(100, 100, 100, 180)
   val lineStroke = new BasicStroke(2f) // stroking style for the lines
   val pointWidth = 4
-  var xAxisName: String = ""
-  var yAxisName: String = ""
+
   val numberOfTicksX = 10  // number of ticks on x axis
-  val numberOfTicksY = 11  // number of ticks on y axis
+  val numberOfTicksY = 10 // number of ticks on y axis
 
   val gridColor = new Color(200, 200, 200, 200)
   var includeGrid: Boolean = _
 
   var inputLines = new mutable.ListBuffer[Line]  // store input lines
+
   // get the number of points of each line to create ticks on x axis
   //var numberOfTicksX: Int = inputLines.flatMap(line => line.data).size
 
@@ -34,37 +34,11 @@ class Graph extends JPanel {
     inputLines += l
   }
 
-  /** Return the minimum x or y of the coordinates */
-  def getMin(axis: String): Double = {
-    var minCoord = Double.PositiveInfinity
-    for (point <- coordinates()) {
-      if (axis == "x") {
-        minCoord = minCoord.min(point._1)
-      } else minCoord = minCoord.min(point._2)
-    }
-    minCoord
-  }
-
-  /** Return the maximum x or y of the input coordinates */
-  def getMax(axis: String): Double = {
-    var maxCoord = Double.NegativeInfinity
-    for (point <- coordinates()) {
-      if (axis == "x") {
-        maxCoord = maxCoord.max(point._1)
-      } else maxCoord = maxCoord.max(point._2)
-    }
-    maxCoord
-  }
-
-  def nameXAxis(name: String) = { xAxisName = name }
-  def nameYAxis(name: String) = { yAxisName = name }
-
-
   /** Override method paintComponent to draw graphic. This method is called automatically. **/
   override def paintComponent(g: Graphics) {
 
     super.paintComponent(g) // call the super class
-    val g2d = g.asInstanceOf[Graphics2D] // cast to Graphics2D
+    val g2d = g.asInstanceOf[Graphics2D] // cast to Graphics2D to have more control over, e.g., geometry.
 
     // Smoothen the graphic rendering
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
@@ -108,35 +82,9 @@ class Graph extends JPanel {
     }
     scaleAndDrawLines()
 
-    // Method to draw the grid
-    def drawGrid() = {
-      for (i <- 0 to numberOfTicksX) { // grid line for x axis
-        if (inputLines.nonEmpty) {
-          val x0 = i * (getWidth - padding * 3) / numberOfTicksX + padding * 2
-          val x1 = x0
-          val y0 = getHeight - padding * 2
-          val y1 = y0 - pointWidth
-          g2d.setColor(gridColor)
-          g2d.drawLine(x0, getHeight - padding * 2 - 1 - pointWidth, x1, padding)
-        }
-      }
+    accessories.draw(g2d, this, inputLines)  // add accessories such as names of axes
 
-      for (i <- 0 to numberOfTicksY) {  // grid line for y axis
-        val y0 = getHeight - ((i * (getHeight - padding * 3)) / numberOfTicksY + padding * 2)
-        val y1 = y0
-        g2d.setColor(gridColor)
-        g2d.drawLine(padding * 2 + 1 + pointWidth, y0, getWidth - padding, y1)
-      }
-    }
-    if (includeGrid) drawGrid()
-
-
-    def addAxisNames(): Unit = {
-      val font = new Font("Serif", Font.PLAIN, 60)
-      /*g2d.drawString(, this.getHeight / 2, this.getHeight / 2)  // name and (x,y) location
-      g2d.drawString()*/
-    }
-    addAxisNames()
+    if (includeGrid) drawGrid(g2d, this)
 
     // Method to draw the ticks and labels on axes
     def drawLabelsAndTicks(): Unit = {
@@ -150,7 +98,6 @@ class Graph extends JPanel {
         g2d.drawLine(x0, y0, x1, y1)  // draw the ticks on x axis
 
         var xLabel: String = ""
-
         if (isInteger("x")) {  // if all x values are integers
           xLabel = ((xMin + (xMax - xMin) * ((i * 1.0) / numberOfTicksX)) * 100).asInstanceOf[Int] / 100 + ""
           val labelWidth = metrics.stringWidth(xLabel)
@@ -180,10 +127,32 @@ class Graph extends JPanel {
     drawLabelsAndTicks()
 
     // Draw x axis and y axis
-      g2d.setColor(Color.BLACK)
-      g2d.drawLine(padding * 2, this.getHeight() - padding * 2,
-        this.getWidth() - padding, this.getHeight() - padding * 2) // x axis
-      g2d.drawLine(padding * 2, this.getHeight() - padding * 2, padding * 2, padding) // y axis
+    g2d.setColor(Color.BLACK)
+    g2d.drawLine(padding * 2, this.getHeight() - padding * 2,
+      this.getWidth() - padding, this.getHeight() - padding * 2) // x axis
+    g2d.drawLine(padding * 2, this.getHeight() - padding * 2, padding * 2, padding) // y axis
+  }
+
+  /** Return the minimum x or y of the coordinates */
+  def getMin(axis: String): Double = {
+    var minCoord = Double.PositiveInfinity
+    for (point <- coordinates()) {
+      if (axis == "x") {
+        minCoord = minCoord.min(point._1)
+      } else minCoord = minCoord.min(point._2)
+    }
+    minCoord
+  }
+
+  /** Return the maximum x or y of the input coordinates */
+  def getMax(axis: String): Double = {
+    var maxCoord = Double.NegativeInfinity
+    for (point <- coordinates()) {
+      if (axis == "x") {
+        maxCoord = maxCoord.max(point._1)
+      } else maxCoord = maxCoord.max(point._2)
+    }
+    maxCoord
   }
 
   /** Method to check if all x or all y coordinates of the input lines are integers. */
@@ -196,6 +165,27 @@ class Graph extends JPanel {
     } else {
       checkInt = inputLines.map(line => line.data.forall(coord => (coord._2 % 1 == 0)))
       if (checkInt.forall(_ == true)) true else false
+    }
+  }
+
+  /** Method to draw the grid */
+  def drawGrid(g2d: Graphics2D, panel: JPanel) = {
+    for (i <- 0 to numberOfTicksX) { // grid line for x axis
+      if (inputLines.nonEmpty) {
+        val x0 = i * (getWidth - padding * 3) / numberOfTicksX + padding * 2
+        val x1 = x0
+        val y0 = getHeight - padding * 2
+        val y1 = y0 - pointWidth
+        g2d.setColor(gridColor)
+        g2d.drawLine(x0, getHeight - padding * 2 - 1 - pointWidth, x1, padding)
+      }
+    }
+
+    for (i <- 0 to numberOfTicksY) { // grid line for y axis
+      val y0 = getHeight - ((i * (this.getHeight - padding * 3)) / numberOfTicksY + padding * 2)
+      val y1 = y0
+      g2d.setColor(gridColor)
+      g2d.drawLine(padding * 2 + 1 + pointWidth, y0, getWidth - padding, y1)
     }
   }
 

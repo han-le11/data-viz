@@ -10,8 +10,10 @@ class Visualization {
   JFrame.setDefaultLookAndFeelDecorated(true)
   val frame = new JFrame("Numerical visualization library")
   frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
-  val graph = new Graph()
-  graph.setPreferredSize(new Dimension(1000, 800))
+
+  val axesAndGrid = new Accessories  // Takes care of axes, grids, etc.
+  val graph = new Graph(axesAndGrid)
+  graph.setPreferredSize(new Dimension(1200, 800))
   frame.add(graph)
 
   def showGrid(show: Boolean) = {
@@ -23,8 +25,8 @@ class Visualization {
     graph.addLine(l)
   }
 
-  def nameXAxis(name: String) = graph.nameXAxis(name)
-  def nameYAxis(name: String) = graph.nameYAxis(name)
+  def nameXAxis(name: String) = axesAndGrid.nameXAxis(name)
+  def nameYAxis(name: String) = axesAndGrid.nameYAxis(name)
 
   // Show the graph
   def show(): Unit = {
