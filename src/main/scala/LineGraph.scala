@@ -6,13 +6,14 @@ import scala.collection.mutable
 class LineGraph(val accessories: Accessories) extends JPanel {
   val padding = 80 // starting point from the upper left corner
   val pointColor = new Color(100, 100, 100, 180)
-  val lineStroke = new BasicStroke(2f) // stroking style for the lines
+  val lineStroke = new BasicStroke(2f) // stroking style for the trend lines
   val pointWidth = 4
-  val defaultColorList = Vector(Color.BLUE, Color.RED, Color.ORANGE) //, Color.MAGENTA)
+
   val numberOfTicksX = 10  // number of ticks on x axis
   val numberOfTicksY = 10 // number of ticks on y axis
 
   val gridColor = new Color(200, 200, 200, 200)
+  val gridStroke = new BasicStroke()
   var includeGrid: Boolean = _
 
   var inputLines = new mutable.ListBuffer[Line]  // store input lines
@@ -29,9 +30,13 @@ class LineGraph(val accessories: Accessories) extends JPanel {
     points
   }
 
-  /** Add a new trend line. */
+  /** Add a new trend line to the buffer that stores the input lines. */
   def addLine(l: Line) = {
     inputLines += l
+  }
+
+  def chooseNumberOfTicks(x: Int, y: Int) = {
+
   }
 
   /** Override method paintComponent to draw graphic. This method is called automatically. **/
@@ -43,7 +48,7 @@ class LineGraph(val accessories: Accessories) extends JPanel {
     // Smoothen the graphic rendering
     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 
-    // Scaling ratio for x and y:
+    // Scaling ratio for x and y in pixel:
     val xScale = this.getWidth - 3 * padding
     val yScale = this.getHeight - 3 * padding
 
@@ -53,8 +58,7 @@ class LineGraph(val accessories: Accessories) extends JPanel {
     val yMin = getMin("y")
     val yMax = getMax("y")
 
-    // Scale from the given coordinates to pixels, then draw the lines.
-
+    // Scale from the given coordinates to pixels, then draw the input lines.
     def scaleAndDrawLines(): Unit = {
       g2d.setStroke(lineStroke)
       //for (line <- inputLines) {
@@ -89,7 +93,6 @@ class LineGraph(val accessories: Accessories) extends JPanel {
     scaleAndDrawLines()
 
     accessories.draw(g2d, this, inputLines)  // add accessories such as names of axes and legend.
-
     if (includeGrid) drawGrid(g2d, this)
 
     // Method to draw the ticks and labels on axes
@@ -116,6 +119,7 @@ class LineGraph(val accessories: Accessories) extends JPanel {
         }
       }
 
+      var yLabel = ""
       for (i <- 0 to numberOfTicksY) {
         val x0 = padding * 2
         val x1 = pointWidth + padding * 2
@@ -123,10 +127,15 @@ class LineGraph(val accessories: Accessories) extends JPanel {
         val y1 = y0
         g2d.drawLine(x0, y0, x1, y1)  // create ticks for y axis
 
-        if (inputLines.nonEmpty) {
-          val yLabel = ((yMin + (yMax - yMin) * ((i * 1.0) / numberOfTicksY)) * 100).asInstanceOf[Int] / 100.0 + ""
+        if (isInteger("y")) {  // if all y values are integers
+          yLabel = ((yMin + (yMax - yMin) * ((i * 1.0) / numberOfTicksX)) * 100).asInstanceOf[Int] / 100 + ""
           val labelWidth = metrics.stringWidth(yLabel)
-          g2d.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight / 2) - 3) // draw the labels on x axis
+          g2d.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight / 2) - 3)  // draw the labels on y axis
+
+        } else if (!isInteger("y")) {  // if not all y values are integers
+          yLabel = ((yMin + (yMax - yMin) * ((i * 1.0) / numberOfTicksY)) * 100).asInstanceOf[Int] / 100.0 + ""
+          val labelWidth = metrics.stringWidth(yLabel)
+          g2d.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight / 2) - 3)  // draw the labels on y axis
         }
       }
     }
@@ -176,21 +185,20 @@ class LineGraph(val accessories: Accessories) extends JPanel {
 
   /** Method to draw the grid */
   def drawGrid(g2d: Graphics2D, panel: JPanel) = {
-    for (i <- 0 to numberOfTicksX) { // grid line for x axis
+    g2d.setColor(gridColor)
+    for (i <- 0 to numberOfTicksX) { // draw grid line for x axis
       if (inputLines.nonEmpty) {
-        val x0 = i * (getWidth - padding * 3) / numberOfTicksX + padding * 2
+        val x0 = i * (panel.getWidth - padding * 3) / numberOfTicksX + padding * 2
         val x1 = x0
-        val y0 = getHeight - padding * 2
+        val y0 = panel.getHeight - padding * 2
         val y1 = y0 - pointWidth
-        g2d.setColor(gridColor)
         g2d.drawLine(x0, getHeight - padding * 2 - 1 - pointWidth, x1, padding)
       }
     }
 
-    for (i <- 0 to numberOfTicksY) { // grid line for y axis
+    for (i <- 0 to numberOfTicksY) { // draw grid line for y axis
       val y0 = getHeight - ((i * (this.getHeight - padding * 3)) / numberOfTicksY + padding * 2)
       val y1 = y0
-      g2d.setColor(gridColor)
       g2d.drawLine(padding * 2 + 1 + pointWidth, y0, getWidth - padding, y1)
     }
   }

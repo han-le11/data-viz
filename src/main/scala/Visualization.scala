@@ -1,9 +1,8 @@
 import java.awt.Dimension
 import javax.swing._
-import scala.swing._
 import scala.util.Random
 
-/** This class is used to visualize the graph. */
+/** This is the main class that is used to visualize the graph. */
 
 class Visualization {
 
@@ -20,7 +19,7 @@ class Visualization {
   def nameXAxis(name: String) = accessories.nameXAxis(name)
   def nameYAxis(name: String) = accessories.nameYAxis(name)
 
-  /** Add a line to the graph */
+  /** Method for line graph to add a single line to the graph */
   def addInput(l: Line): Unit = {
     graph.addLine(l)
   }

@@ -4,7 +4,7 @@ import java.util.Collections.rotate
 import javax.swing._
 import scala.collection.mutable.ListBuffer
 
-/** Takes care of axes, grids, etc. */
+/** Takes care of axes, legend, graph name, etc. */
 class Accessories {
   val gridColor = new Color(200, 200, 200, 200)
   val numberOfTicksX = 10  // number of ticks on x axis
@@ -13,6 +13,7 @@ class Accessories {
   var graphName = "Graph"
   var xAxisName: String = "X"
   var yAxisName: String = "Y"
+  //val defaultColorList = Vector(Color.BLUE, Color.RED, Color.ORANGE, Color.MAGENTA)
 
   /** Change name of the graph */
   def changeGraphName(name: String) = { graphName = name }
@@ -25,11 +26,11 @@ class Accessories {
     drawAxisTitles(g2d, panel)
     drawLegend(g2d, panel, inputs)
     showGraphName(g2d, panel)
-    // drawGrid(g2d)
+    //drawGrid(g2d, panel, inputs)
   }
 
   private def showGraphName(g2d: Graphics2D, panel: JPanel): Unit = {
-    val font = new Font("Serif", Font.PLAIN, 120)
+    val font = new Font("Serif", Font.PLAIN, 400)
     g2d.drawString(graphName, panel.getWidth / 2, padding)
   }
 
@@ -52,7 +53,7 @@ class Accessories {
       g2d.draw(colorLabel)
       g2d.fill(colorLabel)
 
-      // Set color and draw the names
+      // Set text color of the line names and "draw" them
       g2d.setColor(Color.BLACK)
       g2d.drawString(inputs(i).name, padding * i * 4 + padding * 2, panel.getHeight - padding * 2)
     }

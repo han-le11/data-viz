@@ -3,9 +3,7 @@
 object Demo {
   def main(args: Array[String]): Unit = {
     val demoGraph = new Visualization()
-
-    val inputFile = "example/silver.csv"
-    val reader = new CSVReader(inputFile)
+    val reader = new CSVReader("./example/silver.csv")
     val data = reader.records
     demoGraph.nameLineGraph("Silver price")
 
