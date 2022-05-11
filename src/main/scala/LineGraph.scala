@@ -3,18 +3,30 @@ import java.awt.geom._
 import javax.swing._
 import scala.collection.mutable
 
+/** Line graph component that is created when
+  *
+  * @param accessories
+  */
 class LineGraph(val accessories: Accessories) extends JPanel {
   val padding = 80 // starting point from the upper left corner
   val pointColor = new Color(100, 100, 100, 180)
-  val lineStroke = new BasicStroke(2f) // stroking style for the trend lines
+  val lineStroke = new BasicStroke(2f) // set the width of the trend lines and axes
   val pointWidth = 4
+  val defaultColorList = Vector(Color.BLUE, Color.RED, Color.ORANGE, Color.PINK)
 
-  val numberOfTicksX = 10  // number of ticks on x axis
-  val numberOfTicksY = 10 // number of ticks on y axis
+  val numberOfTicksX = 10   // default number of ticks on x axis
+  val numberOfTicksY = 10   // default number of ticks on y axis
 
+  // Make grid style  and dash attributes
+  val dot: Array[Float] = Array(2.0f)
+  val gridStroke = new BasicStroke(1.0f,                    // line width
+                                  BasicStroke.CAP_ROUND,    // end cap style
+                                  BasicStroke.JOIN_ROUND,   // join style
+                                  1.0f,                     // miter limit
+                                  dot,                      // dashing pattern
+                                  0.0f)                     // the offset to start the dashing pattern
   val gridColor = new Color(200, 200, 200, 200)
-  val gridStroke = new BasicStroke()
-  var includeGrid: Boolean = _
+  var hasGrid: Boolean = _
 
   var inputLines = new mutable.ListBuffer[Line]  // store input lines
 
@@ -33,10 +45,6 @@ class LineGraph(val accessories: Accessories) extends JPanel {
   /** Add a new trend line to the buffer that stores the input lines. */
   def addLine(l: Line) = {
     inputLines += l
-  }
-
-  def chooseNumberOfTicks(x: Int, y: Int) = {
-
   }
 
   /** Override method paintComponent to draw graphic. This method is called automatically. **/
@@ -63,10 +71,11 @@ class LineGraph(val accessories: Accessories) extends JPanel {
       g2d.setStroke(lineStroke)
       //for (line <- inputLines) {
       for (i <- inputLines.indices) {
-        //if (i < defaultColorList.size) {
-        g2d.setColor(inputLines(i).lineColor)  // set a line color for each line.
+        if (i < defaultColorList.size) {
+          inputLines(i).lineColor = defaultColorList(i)
+          g2d.setColor(inputLines(i).lineColor)  // set a line color for each line.
 
-        //} else g2d.setColor(inputLines(i).lineColor)  // randomize a color
+        } else g2d.setColor(inputLines(i).lineColor)  // randomize a color
 
         val coords = inputLines(i).data  // tuples (x,y)
         val pixelPoints = mutable.ListBuffer[Point2D.Double]() // a list of points in pixels
@@ -78,7 +87,7 @@ class LineGraph(val accessories: Accessories) extends JPanel {
           pixelPoints += newPoint
         }
 
-        for (i <- pixelPoints.indices) {  // draw a single line
+        for (i <- pixelPoints.indices) {  // draw a trend line
           if (i >= 1) {
             val x1 = pixelPoints(i).x
             val y1 = pixelPoints(i).y
@@ -92,11 +101,11 @@ class LineGraph(val accessories: Accessories) extends JPanel {
     }
     scaleAndDrawLines()
 
-    accessories.draw(g2d, this, inputLines)  // add accessories such as names of axes and legend.
-    if (includeGrid) drawGrid(g2d, this)
+    accessories.addAccessories(g2d, this, inputLines)  // add accessories such as names of axes and legend.
+    if (hasGrid) drawGrid(g2d, this)
 
-    // Method to draw the ticks and labels on axes
-    def drawLabelsAndTicks(): Unit = {
+    // Method to draw the axes, ticks, and labels on axes
+    def addAxes(g2d: Graphics2D, panel: JPanel): Unit = {
       g2d.setColor(Color.BLACK)
       val metrics = g2d.getFontMetrics  // Gets the font metrics of the current font.
       for (i <- 0 to numberOfTicksX) {
@@ -138,14 +147,17 @@ class LineGraph(val accessories: Accessories) extends JPanel {
           g2d.drawString(yLabel, x0 - labelWidth - 5, y0 + (metrics.getHeight / 2) - 3)  // draw the labels on y axis
         }
       }
-    }
-    drawLabelsAndTicks()
 
-    // Draw x axis and y axis
-    g2d.setColor(Color.BLACK)
-    g2d.drawLine(padding * 2, this.getHeight() - padding * 2,
-      this.getWidth() - padding, this.getHeight() - padding * 2) // x axis
-    g2d.drawLine(padding * 2, this.getHeight() - padding * 2, padding * 2, padding) // y axis
+      // Draw x axis and y axis
+      g2d.setStroke(lineStroke)
+      g2d.setColor(Color.BLACK)
+      g2d.drawLine(padding * 2, this.getHeight - padding * 2,
+                  this.getWidth - padding, this.getHeight - padding * 2) // x axis
+      g2d.drawLine(padding * 2, this.getHeight - padding * 2, padding * 2, padding) // y axis
+    }
+    addAxes(g2d, this)
+
+
   }
 
   /** Return the minimum x or y of the coordinates */
@@ -184,8 +196,9 @@ class LineGraph(val accessories: Accessories) extends JPanel {
   }
 
   /** Method to draw the grid */
-  def drawGrid(g2d: Graphics2D, panel: JPanel) = {
+  def drawGrid(g2d: Graphics2D, panel: JPanel): Unit = {
     g2d.setColor(gridColor)
+    g2d.setStroke(gridStroke)
     for (i <- 0 to numberOfTicksX) { // draw grid line for x axis
       if (inputLines.nonEmpty) {
         val x0 = i * (panel.getWidth - padding * 3) / numberOfTicksX + padding * 2
