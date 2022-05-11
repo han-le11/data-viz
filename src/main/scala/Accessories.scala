@@ -2,16 +2,15 @@ import java.awt._
 import java.awt.geom._
 import java.util.Collections.rotate
 import javax.swing._
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
-/** This class takes care of axes, legend, graph name, etc. */
+/** This class takes care of legend, graph name, names and units of x axis and y axis. */
 class Accessories {
-  val gridColor = new Color(200, 200, 200, 200)
-  val numberOfTicksX = 10  // number of ticks on x axis
-  val numberOfTicksY = 10  // number of ticks on y axis
   val padding = 30
-  var graphName = "Graph"
+  var graphName = "Graph"  // default name of the graph
 
+  val lineStroke = new BasicStroke(2f) // set the width of the trend lines and axes
   var xAxisName: String = "X"
   var yAxisName: String = "Y"
   var xUnit: String = ""
@@ -39,6 +38,8 @@ class Accessories {
     g2d.drawString(graphName, panel.getWidth / 2, padding)
   }
 
+
+  /** Add axis titles and units. Only shows units if they are defined by the user. */
   def addAxisTitles(g2d: Graphics2D, panel: JPanel): Unit = {
     g2d.setColor(Color.BLACK)
     val font = new Font("Serif", Font.PLAIN, 60)
@@ -47,25 +48,22 @@ class Accessories {
     val rotated = font.deriveFont(affineTransform)*/
 
     if (xUnit == "" && !(yUnit == "")) {  // if the user does not choose the units for x axis
-      g2d.drawString(xAxisName, panel.getWidth/2, panel.getHeight - padding * 4) // name of x axis and location
-      g2d.drawString(yAxisName + " (" + yUnit + ")", padding, panel.getHeight / 2)
+      g2d.drawString(xAxisName, panel.getWidth/2, panel.getHeight - padding * 4) // name of x axis and its location
+      g2d.drawString(yAxisName + " (" + yUnit + ")", padding, panel.getHeight / 2) // name of y axis and its location
 
     } else if (!(xUnit == "") && yUnit == "") {
       g2d.drawString(xAxisName + " (" + xUnit + ")", panel.getWidth/2, panel.getHeight - padding * 4)
-      g2d.drawString(yAxisName, padding, panel.getHeight / 2)  // name of y axis and location
+      g2d.drawString(yAxisName, padding, panel.getHeight / 2)
+
     } else if (xUnit == "" && yUnit == "") {
       g2d.drawString(xAxisName, panel.getWidth/2, panel.getHeight - padding * 4)
-      g2d.drawString(yAxisName, padding, panel.getHeight / 2)  // name of y axis and location
+      g2d.drawString(yAxisName, padding, panel.getHeight / 2)
+
     } else {
       g2d.drawString(xAxisName + " (" + xUnit + ")", panel.getWidth/2, panel.getHeight - padding * 4)
       g2d.drawString(yAxisName + " (" + yUnit + ")", padding, panel.getHeight / 2)
     }
-
-    def addUnits(axisName: String) = {
-
-    }
   }
-
 
 
   def addLegend(g2d: Graphics2D, panel: JPanel, inputs: ListBuffer[Line]): Unit = {
