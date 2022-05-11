@@ -1,8 +1,7 @@
 import java.awt._
 import java.awt.geom._
-import java.util.Collections.rotate
 import javax.swing._
-import scala.collection.mutable
+//import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 /** This class takes care of legend, graph name, names and units of x axis and y axis. */
@@ -43,9 +42,6 @@ class Accessories {
   def addAxisTitles(g2d: Graphics2D, panel: JPanel): Unit = {
     g2d.setColor(Color.BLACK)
     val font = new Font("Serif", Font.PLAIN, 60)
-    /*val affineTransform = new AffineTransform
-    affineTransform.rotate(Math.toRadians(45), 0, 0)
-    val rotated = font.deriveFont(affineTransform)*/
 
     if (xUnit == "" && !(yUnit == "")) {  // if the user does not choose the units for x axis
       g2d.drawString(xAxisName, panel.getWidth/2, panel.getHeight - padding * 4) // name of x axis and its location

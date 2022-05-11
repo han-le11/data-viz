@@ -1,8 +1,10 @@
 import java.io._
 import scala.collection.mutable
 
-/** Read an input CSV file */
-
+/** Read an input CSV file.
+  *
+  * @param inputFile input csv file
+  */
 class CSVReader(val inputFile: String) {
 
   // Record the column names as keys and data of columns as values

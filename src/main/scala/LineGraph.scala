@@ -87,7 +87,7 @@ class LineGraph(val accessories: Accessories) extends JPanel {
         val coords = inputLines(i).data  // get tuples (x,y)
         val pixelPoints = mutable.ListBuffer[Point2D.Double]() // a list of all points in pixels
 
-        for (i <- coords.indices) {  // go through the vector of coordinates to scale each point
+        for (i <- coords.indices) {  // go through the vector of coordinates to scale each point to pixels
           val x = ((coords(i)._1 - xMin) / (xMax - xMin)) * xScale + padding * 2
           val y = yScale - ((coords(i)._2 - yMin) / (yMax - yMin)) * yScale + padding
           val newPoint = new Point2D.Double(x, y)
@@ -129,7 +129,7 @@ class LineGraph(val accessories: Accessories) extends JPanel {
       g2d.setColor(Color.BLACK)
       val metrics = g2d.getFontMetrics  // Gets the font metrics of the current font.
 
-      if (numberOfXCoords < xTickAndGrid) {  // if there are less than 10 data points for each line
+      if (numberOfXCoords < xTickAndGrid) {  // if there are less than 10 data points in each line
         addXLabels(numberOfXCoords)
       } else {
         addXLabels(xTickAndGrid)

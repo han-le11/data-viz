@@ -24,9 +24,9 @@ object Demo {
     val low = new Line("Lowest price", (xAxis zip data("Low").map(y => y.toDouble)).takeRight(30))
     demoGraph.addLine(low)
 
-    demoGraph.nameLineGraph("Silver price")
+    demoGraph.nameGraph("Silver price")
 
-    demoGraph.nameXAxis("time")
+    demoGraph.nameXAxis("day number")
     demoGraph.nameYAxis("price")
 
     demoGraph.yUnit("USD")    // name the unit of y axis

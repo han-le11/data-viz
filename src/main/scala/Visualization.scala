@@ -16,11 +16,11 @@ class Visualization {
   graph.setPreferredSize(new Dimension(1200, 800))  // the size when the graph is shown.
   frame.add(graph)
 
-  /** Set a name for the line graph.
+  /** Set a name for the graph.
     *
-    * @param name name of the line graph
+    * @param name name of the graph
     */
-  def nameLineGraph(name: String): Unit = accessories.changeGraphName(name)
+  def nameGraph(name: String): Unit = accessories.changeGraphName(name)
 
 
   /** Set a name for the x axis.
