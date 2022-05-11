@@ -5,7 +5,7 @@ import java.io.{FileNotFoundException, IOException}
 class CSVReaderTest extends AnyFlatSpec {
 
   "The CSV reader" should "read the input file correctly." in {
-    val file = "example/silver.csv"
+    val file = "./example/silver.csv"
     val reader = new CSVReader(file)
     val input = reader.records
     assert(input.keySet === Set("Date","Open","High","Low","Close","Volume","Currency"))
@@ -27,7 +27,7 @@ class CSVReaderTest extends AnyFlatSpec {
   }
 
   "The CSV reader" should "throw exception if there is an invalid file format." in {
-    val file = "example/invalid_format.csv"
+    val file = "./example/invalid_format.csv"
     assertThrows[InvalidCsvException] {
       val reader = new CSVReader(file)
     }
