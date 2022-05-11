@@ -1,4 +1,4 @@
-// Demo of a specific use case. This dataset is downloaded from Kaggle.
+// Run this one to see the Demo of a specific use case. This silver price dataset is downloaded from Kaggle.
 
 object Demo {
   def main(args: Array[String]): Unit = {
