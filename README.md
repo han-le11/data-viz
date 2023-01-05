@@ -13,6 +13,18 @@ Basic line graph has 1 to n straight lines with starting and ending points deter
 
 The library can be re-structured a bit to allow potential expandability. For example, adding other graph types such as basic histogram and pie diagram should be relatively simple.
 
+# Directory structure
+The core structure:
+```
+{
+|- datasets       <- Datasets used for demo
+|
+|- src            <- Source code
+|
+|- test           <- Unit test
+}
+```
+
 # Project document
 
 Check the file _document.pdf_ for more details:
