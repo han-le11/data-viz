@@ -1,5 +1,3 @@
-// Run this one to see the Demo of a specific use case. This silver price dataset is downloaded from Kaggle.
-
 object Demo {
   def main(args: Array[String]): Unit = {
     val demoGraph = new Visualization()
@@ -29,8 +27,8 @@ object Demo {
     demoGraph.nameXAxis("day number")
     demoGraph.nameYAxis("price")
 
-    demoGraph.yUnit("USD")    // name the unit of y axis
-    demoGraph.showGrid(true)  // choose to show the grid
+    demoGraph.yUnit("USD") // name the unit of y axis
+    demoGraph.showGrid(true) // choose to show the grid
 
     demoGraph.gridSize(10, 10)
 
