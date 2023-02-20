@@ -15,15 +15,21 @@ The library can be re-structured a bit to allow potential expandability. For exa
 
 # Directory structure
 The core structure:
+
 ```
-{
-|- datasets       <- Datasets used for demo
-|
-|- src            <- Source code
-|
-|- test           <- Unit test
-}
+numerical-visualization-library
+│   README.md
+│   document.pdf    
+│
+└───src
+│   │
+│   └───main
+│   │
+│   └───test
+│   
+└───datasets
 ```
+
 
 # Project document
 
